@@ -3,7 +3,8 @@
 # Usage in the child's start.sh, before launching the app:  vnc-start
 #   ENABLE_VNC=true   -> Xvfb + x11vnc + noVNC at http://<host>:6080/
 #   VNC_PASSWORD=...  -> require a password (strongly advised if port is exposed)
-# Otherwise only Xvfb is started, so non-headless chromium still works.
+#   ENABLE_WM=true    -> also start fluxbox (window manager: active window, title bars, taskbar)
+# Otherwise only Xvfb is started, so non-headless firefox still works.
 
 rm -f /tmp/.X99-lock "/tmp/.X11-unix/X${DISPLAY#:}"
 Xvfb "$DISPLAY" -screen 0 "$SCREEN_GEOMETRY" -nolisten tcp &
@@ -17,6 +18,11 @@ done
 if [ ! -S "/tmp/.X11-unix/X${DISPLAY#:}" ]; then
     echo "vnc-start: Xvfb failed to start on $DISPLAY" >&2
     exit 1
+fi
+
+if [ "$ENABLE_WM" = "true" ]; then
+    # fluxbox, not openbox: under openbox every Firefox window after the first stays black
+    fluxbox >/dev/null 2>&1 &
 fi
 
 if [ "$ENABLE_VNC" = "true" ]; then

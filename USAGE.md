@@ -1,6 +1,7 @@
 # Using firefoxkit as a base image
 
-Base = Debian trixie + Firefox (current release, from Mozilla's APT repo) + Xvfb + x11vnc + noVNC.
+Base = Debian trixie + Firefox (current release, from Mozilla's APT repo) + Xvfb + x11vnc + noVNC
+(+ optional fluxbox window manager).
 Sibling of `chromiumkit`, with the same layout and env vars; only the browser differs.
 No Python/Miniforge/tini/cron/tzdata here; the app image gets those from `dockerapp_template`.
 No geckodriver either: drive Firefox with an extension, or add WebDriver in the app image if you need it.
@@ -67,6 +68,7 @@ if you don't need to watch.
 | `ENABLE_VNC` | `false` | `true` = also start x11vnc + noVNC on 6080 |
 | `VNC_PASSWORD` | empty | Password for VNC |
 | `SCREEN_GEOMETRY` | `1920x1080x24` | Xvfb screen `WxHxDepth` |
+| `ENABLE_WM` | `false` | `true` = also start fluxbox (window manager) |
 
 ## 5. Running Firefox
 
@@ -86,10 +88,9 @@ firefox --no-remote --width 1920 --height 1080 -profile /app/ffprofile https://e
 - Prefs: put a `user.js` in the profile directory, e.g. `browser.translations.automaticallyPopup=false`,
   `browser.sessionstore.resume_from_crash=false`.
 - Regular Firefox only installs **signed** extensions (AMO, including unlisted).
-- Window manager: none is included. Add one only if you need an active window (e.g. OS-level input
-  that checks `_NET_ACTIVE_WINDOW`). Use **fluxbox** (`apt-get install fluxbox`, start it with `fluxbox &`
-  after `vnc-start`). Do not use **openbox**: under openbox every Firefox window after the first stays
-  black on the display and in noVNC (pages still run). Verified on Firefox 158.
+- Window manager: set `ENABLE_WM=true` to start fluxbox (title bars, taskbar, an active window for
+  OS-level input that checks `_NET_ACTIVE_WINDOW`). Do not swap in openbox: under openbox every Firefox
+  window after the first stays black on the display and in noVNC (pages still run). Verified on Firefox 158.
 
 Tested on arm64 (OrbStack, Firefox 158.0.1): pages render on `:99` and in noVNC, CJK included, with
 exactly one Xvfb.

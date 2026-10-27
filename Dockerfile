@@ -17,6 +17,8 @@ ENV DISPLAY=:99
 ENV ENABLE_VNC=false
 ENV VNC_PASSWORD=
 ENV SCREEN_GEOMETRY=1920x1080x24
+# true = vnc-start also starts fluxbox (window manager); needed for an active window (_NET_ACTIVE_WINDOW)
+ENV ENABLE_WM=false
 
 # Firefox from Mozilla's own APT repo (amd64 + arm64, current release; Debian only ships ESR).
 # https://support.mozilla.org/kb/install-firefox-linux#w_install-firefox-deb-package-for-debian-based-distributions
@@ -38,6 +40,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 # procps: pkill for killing stuck firefox processes
 # firefox: from Mozilla (see above); its package pulls the GTK/X11 libraries it needs
 # xvfb xauth: virtual display; x11vnc + novnc + websockify: view it in a browser
+# fluxbox: optional window manager (ENABLE_WM=true); tested with Firefox, unlike openbox (black windows)
 # fonts-liberation fonts-dejavu-core fonts-noto-core fonts-noto-cjk: sane default fonts for rendering pages,
 #   incl. Chinese/Japanese/Korean (a near-empty font list is also an easy bot fingerprint)
 RUN export DEBIAN_FRONTEND=noninteractive && \
@@ -46,6 +49,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
         procps \
         firefox \
         xvfb \
+        fluxbox \
         xauth \
         x11vnc \
         novnc \
