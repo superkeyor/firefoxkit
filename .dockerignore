@@ -10,11 +10,7 @@
 #     - COPY of a folder silently skips excluded files
 #     - the Dockerfile itself is always read, even if excluded
 *
-!app
-!web
-!environment.yml
-!start.sh
-!crontab
+!vnc-start.sh
 
 # ====================================
 # Prune inside allowed folders
